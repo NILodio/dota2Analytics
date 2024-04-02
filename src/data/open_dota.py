@@ -15,7 +15,7 @@ class OpenDotaAPI(object):
         self.logger = logging.getLogger(__name__)
         self.output_filepath = "data/raw" if not output_filepath else output_filepath
 
-    def get_pro_matches(self, num_matches=100, batch_size=100):
+    def get_pro_matches(self, num_matches=100, batch_size=100, checkpoint_size=100):
         """
         Get a dataframe of the pro match data.
 
@@ -28,6 +28,8 @@ class OpenDotaAPI(object):
         """
         matches = []
         remaining_matches = num_matches
+        teams, players, heroes = {}, {}, {}
+
         while remaining_matches > 0:
             current_batch_size = min(remaining_matches, batch_size)
             response = self.get_pro_match_info(self.start_match_id)
@@ -35,18 +37,42 @@ class OpenDotaAPI(object):
 
             for match in response:
                 print("Match #", len(matches), "- Match ID:", match["match_id"])
+                team1_id = match["radiant_team_id"]
+                team2_id = match["dire_team_id"]
                 r_match = self.get_match_info(match["match_id"])
-                r_team_1_info = self.get_team_info(match["radiant_team_id"])
-                r_team_2_info = self.get_team_info(match["dire_team_id"])
-                r_team_1_players = self.get_team_players_info(match["radiant_team_id"])
-                r_team_2_players = self.get_team_players_info(match["dire_team_id"])
-                r_team_1_heroes = self.get_team_heroes_info(match["radiant_team_id"])
-                r_team_2_heroes = self.get_team_heroes_info(match["dire_team_id"])
+
+                # get teams data
+                r_team_1_info = teams[team1_id] if team1_id in teams else self.get_team_info(team1_id)
+                r_team_2_info = teams[team2_id] if team2_id in teams else self.get_team_info(team2_id)
+                teams[team1_id] = r_team_1_info
+                teams[team2_id] = r_team_2_info
+
+                # get players data
+                r_team_1_players = players[team1_id] if team1_id in players else self.get_team_players_info(team1_id)
+                r_team_2_players = players[team2_id] if team2_id in players else self.get_team_players_info(team2_id)
+                players[team1_id] = r_team_1_players
+                players[team2_id] = r_team_2_players
+
+                # get heroes data
+                r_team_1_heroes = heroes[team1_id] if team1_id in heroes else self.get_team_heroes_info(team1_id)
+                r_team_2_heroes = heroes[team2_id] if team2_id in heroes else self.get_team_heroes_info(team2_id)
+                heroes[team1_id] = r_team_1_heroes
+                heroes[team2_id] = r_team_2_heroes
 
                 match_dict = self.set_match_data(match, r_match, r_team_1_info, r_team_2_info, r_team_1_players, r_team_2_players, r_team_1_heroes, r_team_2_heroes)
                 matches.append(match_dict)
 
                 time.sleep(self.rate_limit)
+
+            # save checkpoint file
+            if len(matches) % checkpoint_size == 0:
+            	if not os.path.exists(f"{self.output_filepath}"):
+            		os.makedirs(f"{self.output_filepath}")
+            	matches_df = pd.DataFrame(matches)
+            	file_name = f"./{self.output_filepath}/matches_checkpoint_{len(matches)}.csv"
+            	print(file_name)
+            	matches_df.to_csv(file_name, index=False)
+            	self.logger.info(f"Saved checkpoint to {file_name}")
 
             self.logger.info(f"Fetched {len(response)} matches")
             if len(response) < current_batch_size:
