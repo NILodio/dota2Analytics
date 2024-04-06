@@ -9,18 +9,13 @@ interface HeroListProps {
 }
   
 
-
 export const HeroList = ({ heroes }: HeroListProps) => {
     return (
-        <Box shadow="xs" p="4" mb="6">
-            <SimpleGrid columns={[2, null, 3]} spacing="10px">
-                {heroes?.map((hero) => {
-                    // Print the value of hero to the console
-                    console.log(hero);
-                    return <HeroThumbnail key={hero.id} hero={hero} />;
-                })}
-            </SimpleGrid>
-        </Box>
+        <SimpleGrid columns={5} spacing="5px">
+            {heroes?.map((hero) => {
+                return <HeroThumbnail key={hero.id} hero={hero} />;
+            })}
+        </SimpleGrid>
     );
 };
 export default HeroList

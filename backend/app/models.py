@@ -45,6 +45,7 @@ class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str
     items: list["Item"] = Relationship(back_populates="owner")
+    polls: list["Poll"] = Relationship(back_populates="owner")
 
 
 # Properties to return via API, id is always required
@@ -113,10 +114,52 @@ class NewPassword(SQLModel):
     new_password: str
 
 
-class DotaHeroes(SQLModel, table=False):
+class DotaHeroe(SQLModel):
     id: int
     name: str
     localized_name: str
     primary_attr: str
     attack_type: str
     roles: list[str]
+
+
+class DotaHeroes(SQLModel):
+    data: list[DotaHeroe]
+    count: int
+
+
+class PollBase(SQLModel):
+    hero_id: int
+    hero_name: str
+    team: str
+    description: str | None = None
+
+
+class PollCreate(PollBase):
+    pass
+
+
+class PollUpdate(PollBase):
+    title: str | None = None  # type: ignore
+
+
+# Database model, database table inferred from class name
+class Poll(PollBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    hero_id: int
+    hero_name: str
+    team: str
+    description: str | None = None
+    owner_id: int | None = Field(default=None, foreign_key="user.id", nullable=False)
+    owner: User | None = Relationship(back_populates="polls")
+
+
+# Properties to return via API, id is always required
+class PollOut(ItemBase):
+    id: int
+    owner_id: int
+
+
+class PollsOut(SQLModel):
+    data: list[PollOut]
+    count: int

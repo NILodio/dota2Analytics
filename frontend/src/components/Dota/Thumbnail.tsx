@@ -1,5 +1,5 @@
 import { Hero } from "../../client/models";
-import { Flex, Text, Box, Image} from "@chakra-ui/react";
+import {Box, Image, Text, Flex} from "@chakra-ui/react";
 interface HeroThumbnailProps {
     hero: Hero;
 }
@@ -7,19 +7,18 @@ interface HeroThumbnailProps {
 
 export const HeroThumbnail = ({ hero }: HeroThumbnailProps) => {
 
-	const heroImgSrc = `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${hero.name_loc.toLocaleLowerCase().replace(/\ /g, '_')}.png`
-	const heroAttrImgSrc = `../assets/images/icons/attr_${hero.primary_attr}.png`
-
+	const heroImgSrc = `/images/heroes/${hero.localized_name.toLocaleLowerCase().replace(/\ /g, '_')}.png`;
+	const heroAttrImgSrc = `/images/icons/attr_${hero.primary_attr}.png`
 	return (
 		<Box>
-			<Image boxSize='100px' src={heroImgSrc} alt={hero.name_loc} />
-			{/* <Text>
-				<Flex justify='start' align='center' p='sm'>
-					<Image src={heroAttrImgSrc} alt={`${hero.primary_attr}`}/>
-					<span>{hero.name_loc}</span>
-				</Flex>
-			</Text> */}
-		</Box>
+        <Image width='225px' height='150px' src={heroImgSrc} alt={hero.localized_name} />
+        <Text>
+            <Flex justify='start' align='center' p='sm'>
+                <Image src={heroAttrImgSrc} alt={`${hero.primary_attr}`} width='30px' height='30px' mr='sm' />
+                <span>{hero.localized_name}</span>
+            </Flex>
+        </Text>
+    </Box>
 	)
 }
 export default HeroThumbnail

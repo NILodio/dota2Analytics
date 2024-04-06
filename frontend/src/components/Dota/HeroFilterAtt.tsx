@@ -7,8 +7,7 @@ export const useHeroesByAttr = (heroes: Hero[]) => {
 
 	const heroesByAttr = useMemo(() => {
 		if (heroAttr === '') return heroes
-
-		return heroes.filter((hero) => hero.primary_attr === Number(heroAttr))
+		return heroes.filter((hero) => hero.primary_attr === String(heroAttr))
 	}, [heroes, heroAttr])
 
 	return { heroesByAttr, setHeroAttr }

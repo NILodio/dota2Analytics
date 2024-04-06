@@ -7,7 +7,7 @@ export const useFilteredHeroes = (heroes: Hero[]) => {
 
 	const filteredHeroes = useMemo(() => {
 		return heroes?.filter((hero: Hero) =>
-			hero.name_loc.toLocaleLowerCase().includes(heroFilter.toLocaleLowerCase()),
+			hero.localized_name.toLocaleLowerCase().includes(heroFilter.toLocaleLowerCase()),
 		)
 	}, [heroFilter, heroes])
 

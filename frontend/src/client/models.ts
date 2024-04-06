@@ -21,6 +21,13 @@ export type ItemCreate = {
 };
 
 
+export type HeroPollCreate = {
+	hero_id: number;
+	hero_name: string;
+	team: string;
+	description?: string | null;
+};
+
 
 export type ItemOut = {
 	title: string;
@@ -132,15 +139,28 @@ export type ValidationError = {
 
 
 export interface Hero {
-	id: string
-	name: string
-	name_loc: string
-	name_english_loc: string
-	primary_attr: 0 | 1 | 2
-	complexity: 1 | 2 | 3
+	id: number
+	localized_name: string
+	primary_attr: 'str' | 'agi' | 'int' | 'all'
+	attack_type: string
+	roles: Array<string>
 }
 
-export type HeroAttr = '0' | '1' | '2'
+export type HeroAttr = 'str' | 'agi' | 'int' | 'all'
 
 export type SetHeroAttr = (value: HeroAttr) => void
 export type SetHeroFilter = (value: string) => void
+
+export type HeroOut = {
+	id: number;
+	name: string;
+	localized_name: string;
+	primary_attr: string;
+	attack_type: string;
+	roles: Array<string>;
+};
+
+export type HeroesOut = {
+	data: Array<HeroOut>;
+	count: number;
+};

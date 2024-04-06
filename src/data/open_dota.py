@@ -110,7 +110,7 @@ class OpenDotaAPI(object):
                 "duration": response["duration"],
                 "tower_status_dire": response["tower_status_dire"],
                 "tower_status_radiant": response["tower_status_radiant"],
-                "skill": response['skill'] if 'skils' in response else None,
+                "skill": response["skill"] if "skils" in response else None,
                 "region": response["region"] if "region" in response else None,
                 "throw": response["throw"] if "throw" in response else None,
                 "comeback": response["comeback"] if "comeback" in response else None,
