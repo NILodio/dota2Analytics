@@ -9,14 +9,14 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { FiEdit, FiTrash } from "react-icons/fi"
 
-import type {UserOut, PollOut} from "../../client"
+import type {UserOut, PollOut, ItemOut} from "../../client"
 import EditUser from "../Admin/EditUser"
 import EditPoll from "../Poll/Editpoll"
 import Delete from "./DeleteAlert"
 
 interface ActionsMenuProps {
   type: string
-  value: UserOut | PollOut
+  value: UserOut | PollOut | ItemOut
   disabled?: boolean
 }
 

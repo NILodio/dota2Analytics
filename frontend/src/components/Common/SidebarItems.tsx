@@ -6,7 +6,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import type { UserOut } from "../../client"
 
 const items = [
-  { icon: FiHome, title: "Analytics", path: "/" },
+  { icon: FiHome, title: "Heros", path: "/" },
   { icon: FiBox, title: "Polls", path: "/polls" },
   { icon: FiSettings, title: "User Settings", path: "/settings" },
 ]

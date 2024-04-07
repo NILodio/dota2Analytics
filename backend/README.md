@@ -1,4 +1,4 @@
-# FastAPI Project - Backend
+# Dota Project - Backend
 
 ## Requirements
 

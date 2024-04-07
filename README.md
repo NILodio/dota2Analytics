@@ -3,7 +3,6 @@ Dota2Analytics
 
 ## 🚨 Warning: This project is currently undergoing restructuring. 😎 
 
-Please avoid using it at the moment and patiently await further updates.
 --------
 
 ## Technology Stack and Features
@@ -18,6 +17,7 @@ Please avoid using it at the moment and patiently await further updates.
     - 🤖 An automatically generated frontend client.
     - 🦇 Dark mode support.
 - 🐋 [Docker Compose](https://www.docker.com) for development and production.
+- 💻 [Jupyter](https://jupyter.org/) for ML develoment
 - 🔒 Secure password hashing by default.
 - 🔑 JWT token authentication.
 - ✅ Tests with [Pytest](https://pytest.org).
@@ -29,8 +29,25 @@ You can **just fork or clone** this repository and use it as is.
 
 ✨ It just works. ✨
 
-> [!IMPORTANT]
+> [!TIP]
 > ``docker-compose up -d --build``
+
+### Dota Login
+
+[![API docs](img/login.png)](https://github.com/NILodio/dota2Analytics)
+
+### Dashboard - Heros
+
+[![API docs](img/heros.png)](https://github.com/NILodio/dota2Analytics)
+
+### Dashboard - Poll
+
+[![API docs](img/poll.png)](https://github.com/NILodio/dota2Analytics)
+
+
+### Interactive API Documentation
+
+[![API docs](img/api.png)](https://github.com/NILodio/dota2Analytics)
 
 ## ML Development
 1. First, yo need to create a virtual environment by running `make create_environment` on the root directory of this project please make sure you have `make` installed on your machine before running this command or you can create a virtual environment by running `python3 -m venv venv` and activate the virtual environment by running `source venv/bin/activate`
@@ -66,8 +83,6 @@ all this project is create with Makefile. Thus, you can run the command by using
 
 You can then update configs in the `.env` files to customize your configurations.
 
-Before deploying it, make sure you change at least the values for:
-
 - `SECRET_KEY`
 - `FIRST_SUPERUSER_PASSWORD`
 - `POSTGRES_PASSWORD`
@@ -75,7 +90,6 @@ Before deploying it, make sure you change at least the values for:
 
 You can (and should) pass these as environment variables from secrets.
 
-Read the [deployment.md](./deployment.md) docs for more details.
 
 ### Generate Secret Keys
 
@@ -103,10 +117,7 @@ General development docs: [development.md](./development.md).
 
 This includes using Docker Compose, custom local domains, `.env` configurations, etc.
 
-## Release Notes
-
-Check the file [release-notes.md](./release-notes.md).
 
 ## License
 
-The Full Stack FastAPI Template is licensed under the terms of the MIT license.
+The Dota 2 Analytics is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

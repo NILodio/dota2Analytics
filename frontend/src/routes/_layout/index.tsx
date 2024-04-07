@@ -53,7 +53,7 @@ function Dashboard() {
         heroes && (
           <Container maxW="full">
             <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-              Dota Management
+              Dota Heroes
             </Heading>
             <Container maxW="full">
               <HeroNavbar>
