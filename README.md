@@ -4,16 +4,36 @@ Dota2Analytics
 ## 🚨 Warning: This project is currently undergoing restructuring. 😎 
 
 Please avoid using it at the moment and patiently await further updates.
-
-Anticipated completion in the next couple of months. 😎 🚀
-
-
 --------
 
+## Technology Stack and Features
 
-### Setup
+- ⚡ [**FastAPI**](https://fastapi.tiangolo.com) for the Python backend API.
+    - 🧰 [SQLModel](https://sqlmodel.tiangolo.com) for the Python SQL database interactions (ORM).
+    - 🔍 [Pydantic](https://docs.pydantic.dev), used by FastAPI, for the data validation and settings management.
+    - 💾 [PostgreSQL](https://www.postgresql.org) as the SQL database.
+- 🚀 [React](https://react.dev) for the frontend.
+    - 💃 Using TypeScript, hooks, Vite, and other parts of a modern frontend stack.
+    - 🎨 [Chakra UI](https://chakra-ui.com) for the frontend components.
+    - 🤖 An automatically generated frontend client.
+    - 🦇 Dark mode support.
+- 🐋 [Docker Compose](https://www.docker.com) for development and production.
+- 🔒 Secure password hashing by default.
+- 🔑 JWT token authentication.
+- ✅ Tests with [Pytest](https://pytest.org).
+- 📞 [Traefik](https://traefik.io) as a reverse proxy / load balancer.
 
-1. First, yo need to create a virtual environment by running `make create_environment` on the root directory of this project please make sure you have `make` installed on your machine before running this command
+## How To Use It
+
+You can **just fork or clone** this repository and use it as is.
+
+✨ It just works. ✨
+
+> [!IMPORTANT]
+> ``docker-compose up -d --build``
+
+## ML Development
+1. First, yo need to create a virtual environment by running `make create_environment` on the root directory of this project please make sure you have `make` installed on your machine before running this command or you can create a virtual environment by running `python3 -m venv venv` and activate the virtual environment by running `source venv/bin/activate`
 2. Then, you need to install the dependecies by running `make requirements` on the same directory where `requirements.txt` located
 3. Create `.env` file at the root directory of this project/repo or copy the `.env.example` and rename it to `.env`
 4. Dota Key is required to run this project. You can get the key by registering at [OpenDota](https://www.opendota.com/) and get the key from the profile page.
@@ -22,12 +42,11 @@ Anticipated completion in the next couple of months. 😎 🚀
 > Crucial please add the make coomand when you create a new command. It will help you to understand the command that you want to run. For example, if you want to get data process you can run `make data`
 
 
-
 ### How to Use this Tool After Doing Setup?
 all this project is create with Makefile. Thus, you can run the command by using `make` command. Here are the list of command that you can use:
 
 
-1. `make data` : This command will run the scrapping process. It will scrap the job data from JobStreet website and store the result to CSV
+1. `make data` : This command will run the scrapping process. It will get the data from OpenDota website and store the result to CSV
 
 2. `make requirements` : This command will install all the dependencies that listed at `requirements.txt`
 
@@ -39,53 +58,55 @@ all this project is create with Makefile. Thus, you can run the command by using
 > Crucial please add the make coomand when you create a new command. It will help you to understand the command that you want to run. For example, if you want to get data process you can run `make data`
 
 
-Project Organization
-------------
+## Application Development
 
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+### Configure
 
+`.env.example` -> `.env`
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+You can then update configs in the `.env` files to customize your configurations.
+
+Before deploying it, make sure you change at least the values for:
+
+- `SECRET_KEY`
+- `FIRST_SUPERUSER_PASSWORD`
+- `POSTGRES_PASSWORD`
+- `OPEN_DOTA_KEY`
+
+You can (and should) pass these as environment variables from secrets.
+
+Read the [deployment.md](./deployment.md) docs for more details.
+
+### Generate Secret Keys
+
+Some environment variables in the `.env` file have a default value of `changethis`.
+
+You have to change them with a secret key, to generate secret keys you can run the following command:
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+Copy the content and use that as password / secret key. And run that again to generate another secure key.
+
+## Backend Development
+
+Backend docs: [backend/README.md](./backend/README.md).
+
+## Frontend Development
+
+Frontend docs: [frontend/README.md](./frontend/README.md).
+
+## Development
+
+General development docs: [development.md](./development.md).
+
+This includes using Docker Compose, custom local domains, `.env` configurations, etc.
+
+## Release Notes
+
+Check the file [release-notes.md](./release-notes.md).
+
+## License
+
+The Full Stack FastAPI Template is licensed under the terms of the MIT license.

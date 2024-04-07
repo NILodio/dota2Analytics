@@ -9,14 +9,14 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { FiEdit, FiTrash } from "react-icons/fi"
 
-import type { ItemOut, UserOut } from "../../client"
+import type {UserOut, PollOut} from "../../client"
 import EditUser from "../Admin/EditUser"
-import EditItem from "../Items/EditItem"
+import EditPoll from "../Poll/Editpoll"
 import Delete from "./DeleteAlert"
 
 interface ActionsMenuProps {
   type: string
-  value: ItemOut | UserOut
+  value: UserOut | PollOut
   disabled?: boolean
 }
 
@@ -55,8 +55,8 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
             onClose={editUserModal.onClose}
           />
         ) : (
-          <EditItem
-            item={value as ItemOut}
+          <EditPoll
+            poll={value as PollOut}
             isOpen={editUserModal.isOpen}
             onClose={editUserModal.onClose}
           />

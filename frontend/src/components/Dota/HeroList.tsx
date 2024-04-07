@@ -1,4 +1,4 @@
-import { SimpleGrid, Box } from '@chakra-ui/react';
+import { SimpleGrid} from '@chakra-ui/react';
 import { Hero } from '../../client/models';
 import { HeroThumbnail } from './Thumbnail';
 

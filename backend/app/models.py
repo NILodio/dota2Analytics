@@ -132,6 +132,7 @@ class PollBase(SQLModel):
     hero_id: int
     hero_name: str
     team: str
+    player_name: str | None = None
     description: str | None = None
 
 
@@ -140,7 +141,7 @@ class PollCreate(PollBase):
 
 
 class PollUpdate(PollBase):
-    title: str | None = None  # type: ignore
+    pass
 
 
 # Database model, database table inferred from class name
@@ -149,13 +150,14 @@ class Poll(PollBase, table=True):
     hero_id: int
     hero_name: str
     team: str
+    player_name: str | None = None
     description: str | None = None
     owner_id: int | None = Field(default=None, foreign_key="user.id", nullable=False)
     owner: User | None = Relationship(back_populates="polls")
 
 
 # Properties to return via API, id is always required
-class PollOut(ItemBase):
+class PollOut(PollBase):
     id: int
     owner_id: int
 

@@ -11,17 +11,15 @@ import React from "react"
 import { useForm } from "react-hook-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import { UsersService, PollsService} from "../../client"
+import {PollsService} from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
-interface DeleteProps {
-  type: string
-  id: number
+interface DeletePollProps {
   isOpen: boolean
   onClose: () => void
 }
 
-const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
+const DeletePolls = ({isOpen, onClose }: DeletePollProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const cancelRef = React.useRef<HTMLButtonElement | null>(null)
@@ -30,14 +28,8 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
     formState: { isSubmitting },
   } = useForm()
 
-  const deleteEntity = async (id: number) => {
-    if (type === "Poll") {
-      await PollsService.deletePoll({ id: id })
-    } else if (type === "User") {
-      await UsersService.deleteUser({ userId: id })
-    } else {
-      throw new Error(`Unexpected type: ${type}`)
-    }
+  const deleteEntity = async () => {
+    await PollsService.deletePolls()
   }
 
   const mutation = useMutation({
@@ -45,7 +37,7 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
     onSuccess: () => {
       showToast(
         "Success",
-        `The ${type.toLowerCase()} was deleted successfully.`,
+        `The polls were deleted successfully.`,
         "success",
       )
       onClose()
@@ -53,19 +45,19 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
     onError: () => {
       showToast(
         "An error occurred.",
-        `An error occurred while deleting the ${type.toLowerCase()}.`,
+        `An error occurred while deleting the polls`,
         "error",
       )
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: [type === "Poll" ? "polls" : "users"],
+        queryKey: ["polls"],
       })
     },
   })
 
   const onSubmit = async () => {
-    mutation.mutate(id)
+    mutation.mutate()
   }
 
   return (
@@ -79,15 +71,9 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
       >
         <AlertDialogOverlay>
           <AlertDialogContent as="form" onSubmit={handleSubmit(onSubmit)}>
-            <AlertDialogHeader>Delete {type}</AlertDialogHeader>
+            <AlertDialogHeader>Delete Polls</AlertDialogHeader>
 
             <AlertDialogBody>
-              {type === "User" && (
-                <span>
-                  All items associated with this user will also be{" "}
-                  <strong>permantly deleted. </strong>
-                </span>
-              )}
               Are you sure? You will not be able to undo this action.
             </AlertDialogBody>
 
@@ -110,4 +96,4 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
   )
 }
 
-export default Delete
+export default DeletePolls

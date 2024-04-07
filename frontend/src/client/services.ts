@@ -19,6 +19,10 @@ import type {
   ItemsOut,
   ItemUpdate,
   HeroesOut,
+  PollCreate,
+  PollOut,
+  PollsOut,
+  PollUpdate,
 } from "./models";
 
 export type TDataLoginAccessToken = {
@@ -511,12 +515,55 @@ export class DotaService {
   public static readHeroes(
     data: TDataReadHeroes = {}
   ): CancelablePromise<HeroesOut> {
-    const { limit = 100} = data;
+    const { limit = 100 } = data;
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/dota/heroes/",
       query: {
-        limit
+        limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+}
+
+export type TDataReadPolls = {
+  limit?: number;
+  skip?: number;
+};
+export type TDataCreatePoll = {
+  requestBody: PollCreate;
+};
+export type TDataReadPoll = {
+  id: number;
+};
+export type TDataUpdatePoll = {
+  id: number;
+  requestBody: PollUpdate;
+};
+export type TDataDeletePoll = {
+  id: number;
+};
+
+export class PollsService {
+  /**
+   * Read Polls
+   * Retrieve polls.
+   * @returns PollsOut Successful Response
+   * @throws ApiError
+   */
+  public static readPolls(
+    data: TDataReadPolls = {}
+  ): CancelablePromise<PollsOut> {
+    const { limit = 100, skip = 0 } = data;
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/dota/polls",
+      query: {
+        skip,
+        limit,
       },
       errors: {
         422: `Validation Error`,
@@ -524,4 +571,101 @@ export class DotaService {
     });
   }
 
+  /**
+   * Create Poll
+   * Create new poll.
+   * @returns PollOut Successful Response
+   * @throws ApiError
+   */
+  public static createPoll(data: TDataCreatePoll): CancelablePromise<PollOut> {
+    const { requestBody } = data;
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/dota/poll",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Read Poll
+   * Get poll by ID.
+   * @returns PollOut Successful Response
+   * @throws ApiError
+   * */
+  public static readPoll(data: TDataReadPoll): CancelablePromise<PollOut> {
+    const { id } = data;
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/dota/poll/{id}",
+      path: {
+        id,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Update Poll
+   * Update a poll.
+   * @returns PollOut Successful Response
+   * @throws ApiError
+   * */
+  public static updatePoll(data: TDataUpdatePoll): CancelablePromise<PollOut> {
+    const { id, requestBody } = data;
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/dota/poll/{id}",
+      path: {
+        id,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Delete Poll
+   * Delete a poll.
+   * @returns Message Successful Response
+   * @throws ApiError
+   * */
+  public static deletePoll(data: TDataDeletePoll): CancelablePromise<Message> {
+    const { id } = data;
+    return __request(OpenAPI, {
+      method: "DELETE",
+      url: "/api/v1/dota/poll/{id}",
+      path: {
+        id,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+    /**
+   * Delete Polls
+   * Delete a polls.
+   * @returns Message Successful Response
+   * @throws ApiError
+   * */
+    public static deletePolls(): CancelablePromise<Message> {
+      return __request(OpenAPI, {
+        method: "DELETE",
+        url: "/api/v1/dota/polls",
+        errors: {
+          422: `Validation Error`,
+          404: `Not Found`,
+        },
+      });
+    }
 }

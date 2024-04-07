@@ -6,12 +6,7 @@ import {
 } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
-import useSWR from 'swr'
-import { HEROES_API } from '../../constants/hero.const'
-import { getHeroesAPI } from '../../utils/hero.api'
-
-import { ItemsService , DotaService} from "../../client"
-
+import {DotaService} from "../../client"
 import {HeroList} from "../../components/Dota/HeroList"
 import {useFilteredHeroes} from "../../components/Dota/HeroFilter"
 import {useHeroesByAttr} from "../../components/Dota/HeroFilterAtt"

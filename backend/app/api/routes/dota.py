@@ -147,3 +147,17 @@ def delete_poll(session: SessionDep, current_user: CurrentUser, id: int) -> Mess
     session.delete(poll)
     session.commit()
     return Message(message="Poll deleted successfully")
+
+
+@router.delete("/polls")
+def delete_polls(session: SessionDep, current_user: CurrentUser) -> Message:
+    """
+    Delete a poll.
+    """
+    if not current_user.is_superuser:
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+    polls = session.query(Poll).delete()
+    if not polls:
+        raise HTTPException(status_code=404, detail="Polls not found")
+    session.commit()
+    return Message(message="Polls deleted successfully")
