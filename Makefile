@@ -44,6 +44,11 @@ format:
 lint:
 	flake8 src
 
+.PHONY: migrate
+migrate:
+	docker-compose exec backend bash -c "alembic revision --autogenerate -m '$(argument)' && alembic upgrade head"
+
+
 ## Upload Data to S3
 sync_data_to_s3:
 ifeq (default,$(PROFILE))
