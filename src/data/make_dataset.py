@@ -20,8 +20,8 @@ def save_data_name(data, output_filepath):
 
 @click.command()
 @click.argument("output_filepath", type=click.Path())
-@click.option("--num_matches", default=100, help="Number of matches to fetch.")
-def main(output_filepath, num_matches=100):
+@click.option("--num_matches", default=200, help="Number of matches to fetch.")
+def main(output_filepath, num_matches=200):
     """Runs data processing scripts to turn raw data from (../raw) into
     cleaned data ready to be analyzed (saved in ../processed).
     """
@@ -29,12 +29,9 @@ def main(output_filepath, num_matches=100):
     logger = logging.getLogger(__name__)
     logger.info("making final data set from raw data")
     data = OpenDotaAPI(output_filepath=output_filepath)
-    pro_matches_df, match_info = data.get_pro_matches(num_matches=num_matches)
-    name = f"{output_filepath}/proMatches{num_matches}.csv"
-    save_data_name(pro_matches_df, name)
-    logger.info(f"Saved data to {name}")
-    name = f"{output_filepath}/matchInfo{num_matches}.csv"
-    save_data_name(match_info, name)
+    matches_df = data.get_pro_matches(num_matches=num_matches)
+    name = f"{output_filepath}/matches_{num_matches}.csv"
+    save_data_name(matches_df, name)
     logger.info(f"Saved data to {name}")
 
 
