@@ -14,6 +14,8 @@ from app.models import (
     PollOut,
     PollsOut,
     PollUpdate,
+    Teams,
+    TeamsOut,
 )
 
 router = APIRouter()
@@ -85,6 +87,23 @@ def read_polls(
         polls = session.exec(statement).all()
 
     return PollsOut(data=polls, count=count)
+
+
+@router.get("/teams", response_model=TeamsOut)
+def read_teams(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
+    """
+    Retrieve teams.
+    """
+
+    count_statement = select(func.count()).select_from(Teams)
+    count = session.exec(count_statement).one()
+    if not count:
+        raise HTTPException(status_code=404, detail="Teams not found")
+    else:
+        statement = select(Teams).offset(skip).limit(limit)
+        teams = session.exec(statement).all()
+
+    return TeamsOut(data=teams, count=count)
 
 
 @router.get("/poll/{id}", response_model=PollOut)

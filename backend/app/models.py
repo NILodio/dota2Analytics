@@ -165,3 +165,14 @@ class PollOut(PollBase):
 class PollsOut(SQLModel):
     data: list[PollOut]
     count: int
+
+
+class Teams(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    id_team: float
+    name_team: str
+
+
+class TeamsOut(SQLModel):
+    data: list[Teams]
+    count: int
