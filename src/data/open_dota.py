@@ -15,6 +15,62 @@ class OpenDotaAPI(object):
         self.logger = logging.getLogger(__name__)
         self.output_filepath = "data/raw" if not output_filepath else output_filepath
 
+    def get_model_features_from_input(self, input_list):
+    	"""
+    	Returns a dataframe with the required columns to feed our best model
+    	Args:
+    		input_list (list): contains the following integers from the front-end
+			    		['team1_hero1', 'team1_hero2', 'team1_hero3', 'team1_hero4', 'team1_hero5',
+						 'team2_hero1', 'team2_hero2', 'team2_hero3', 'team2_hero4', 'team2_hero5',
+						 'team1_id', 'team2_id']
+    	"""
+    	if not isinstance(input_list, list) or len(input_list) != 12:
+    		raise Exception("Input list doesn't contain accurate required data.")
+
+    	# retrieve data from input list (teams and heroes ids)
+    	team1_id = input_list[-2]
+    	team2_id = input_list[-1]
+    	team1_heroes_ids = input_list[:5]
+    	team2_heroes_ids = input_list[5:10]
+
+    	# get teams rating from OpenDotaAPI
+    	team1_info = self.get_team_info(team1_id)
+    	team2_info = self.get_team_info(team2_id)
+    	team1_rating = 1000 if 'rating' not in team1_info else team1_info['rating']
+    	team2_rating = 1000 if 'rating' not in team1_info else team2_info['rating']
+
+    	# get heroes wins from OpenDotaAPI
+    	team1_heroes_info = self.get_team_heroes_info(team1_id)
+    	team2_heroes_info = self.get_team_heroes_info(team2_id)
+    	team1_heroes_wins = self.get_hero_wins(team1_heroes_ids, team1_heroes_info)
+    	team2_heroes_wins = self.get_hero_wins(team2_heroes_ids, team2_heroes_info)
+
+    	# merge the data into one pandas DataFrame (model input)
+    	model_features = [[team1_rating] + [team2_rating] + [team1_heroes_wins[2]] + [team1_heroes_wins[4]] + team2_heroes_wins]
+    	model_column_names = ['team1_rating', 'team2_rating', 'team1_hero3_wins', 'team1_hero5_wins', 'team2_hero1_wins', 'team2_hero2_wins', 'team2_hero3_wins', 'team2_hero4_wins', 'team2_hero5_wins']
+    	return pd.DataFrame(data=model_features, columns=model_column_names)
+
+    def get_hero_wins(self, team_heroes_ids, team_heroes_info):
+    	team_heroes_wins = []
+    	# loop through match hero ids
+    	for hero_id in team_heroes_ids:
+    		wins_len = len(team_heroes_wins)
+    		# loop through historical team all heroes info
+    		for hero_info in team_heroes_info:
+    			# find the hero from the match and save wins
+    			if "hero_id" in hero_info and "wins" in hero_info and hero_info["hero_id"] == hero_id:
+    				team_heroes_wins.append(hero_info["wins"])
+    				break
+    		# if we didn't find the hero id (extremely rare) let's pick a random id to avoid errors
+    		if len(team_heroes_wins) == wins_len:
+    			team_heroes_wins.append(2)
+
+    	if len(team_heroes_wins) != 5:
+    		raise Exception("Error trying to get one of the hero wins from one of the teams, using OpenDotaAPI.")
+    	return team_heroes_wins
+
+
+
     def get_pro_matches(self, num_matches=100, batch_size=100, checkpoint_size=100):
         """
         Get a dataframe of the pro match data.
@@ -185,7 +241,7 @@ class OpenDotaAPI(object):
 
     def add_picks_bans_data(self, match, picks_bans):
 
-        if picks_bans is None:
+        if picks_bans is None or len(picks_bans) < 24:
             for i in range(1, 6):
                 match["team1_hero" + str(i)] = None
             for i in range(1, 6):
@@ -272,7 +328,9 @@ class OpenDotaAPI(object):
         players = []
         if "players" in response:
             for player in response["players"]:
-                players.append({"account_id": player["account_id"], "player_slot": player["player_slot"]})
+            	acc_id = None if "account_id" not in player else player["account_id"]
+            	acc_slot = None if "player_slot" not in player else player["player_slot"]
+            	players.append({"account_id": acc_id, "player_slot": acc_slot})
 
         if not response:
             return {
