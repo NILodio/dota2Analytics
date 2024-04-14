@@ -307,7 +307,11 @@ def predict_poll(
 
     feactures = open_dota.get_model_features_from_input(predict_list)
 
-    output = make_prediction(feactures, "models/3_GradientBoostingClassifier.pkl")
+    output = make_prediction(
+        feactures,
+        "models/3_GradientBoostingClassifier.pkl",
+        "models/StandardScaler.pkl",
+    )
 
     if output[0] == 1:
         return PredictOut(prediction=output[0], message="Radiant Wins")
@@ -327,7 +331,11 @@ def predict_poll_list(
 
     feactures = open_dota.get_model_features_from_input(data)
 
-    output = make_prediction(feactures, "models/3_GradientBoostingClassifier.pkl")
+    output = make_prediction(
+        feactures,
+        "models/3_GradientBoostingClassifier.pkl",
+        "models/StandardScaler.pkl",
+    )
 
     if output[0] == 1:
         return PredictOut(prediction=output[0], message="Radiant Wins")
