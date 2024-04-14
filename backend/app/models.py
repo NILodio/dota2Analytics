@@ -183,3 +183,7 @@ class TeamsOut(SQLModel):
 class PredictOut(SQLModel):
     prediction: int
     message: str
+
+
+class PredictList(SQLModel):
+    data: list[int]
