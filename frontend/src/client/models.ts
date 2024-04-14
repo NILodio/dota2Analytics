@@ -164,6 +164,6 @@ export type PollsOut = {
 };
 
 export type PredictOut = {
-  prediction: int;
+  prediction: number;
   message: string;
 };

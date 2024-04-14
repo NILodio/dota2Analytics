@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from jinja2 import Template
 from jose import JWTError, jwt
-from sklearn.preprocessing import PolynomialFeatures, StandardScaler
+from sklearn.preprocessing import PolynomialFeatures
 
 from app.core.config import settings
 
@@ -132,13 +132,11 @@ def apply_log_transformation(df_original):
     return df
 
 
-def standard_scale_dataset(df):
-    # get numerical columns
+def standard_scale_dataset(df, scaler_path):
     numerical_columns = get_numerical_columns(df)
-    # scale the dataset using a StandardScaler
-    scaler = StandardScaler()
+    scaler = load_model(scaler_path)
     df_numeric = df[numerical_columns]
-    df_scaled = scaler.fit_transform(df_numeric.to_numpy())
+    df_scaled = scaler.transform(df_numeric.to_numpy())
     df_scaled = pd.DataFrame(df_scaled, columns=df_numeric.columns.to_list())
     return df_scaled
 
@@ -155,22 +153,10 @@ def load_model(path):
     return pickle.load(open(path, "rb"))
 
 
-def make_prediction(df, model_path):
-
-    df = apply_log_transformation(
-        df
-    )  # apply log transformation on columns with outliers
-
-    df_scaled = standard_scale_dataset(
-        df
-    )  # apply standard scaling to the dataset (excludes non-numeric columns)
-
-    complex_df = extract_polynomial_features(
-        df_scaled, degree=2
-    )  # extract polynomial features
-
-    model = load_model(model_path)  # load the model
-
-    y_pred = model.predict(complex_df)  # predict the new data target
-
+def make_prediction(df, model_path, scaler_path):
+    df = apply_log_transformation(df)
+    df_scaled = standard_scale_dataset(df, scaler_path)
+    complex_df = extract_polynomial_features(df_scaled, degree=2)
+    model = load_model(model_path)
+    y_pred = model.predict(complex_df)
     return y_pred
