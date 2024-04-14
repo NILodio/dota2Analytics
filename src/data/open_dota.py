@@ -61,9 +61,10 @@ class OpenDotaAPI(object):
     			if "hero_id" in hero_info and "wins" in hero_info and hero_info["hero_id"] == hero_id:
     				team_heroes_wins.append(hero_info["wins"])
     				break
-    		# if we didn't find the hero id (extremely rare) let's pick a random id to avoid errors
+    		# if we didn't find the hero id (extremely rare) let's set the number of wins to zero
+    		# because the team has never played with the input hero (ID)
     		if len(team_heroes_wins) == wins_len:
-    			team_heroes_wins.append(2)
+    			team_heroes_wins.append(0)
 
     	if len(team_heroes_wins) != 5:
     		raise Exception("Error trying to get one of the hero wins from one of the teams, using OpenDotaAPI.")
