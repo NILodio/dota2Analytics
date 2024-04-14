@@ -5,13 +5,15 @@ import time  # Import time module for rate limiting
 import pandas as pd
 import requests
 
+from app.core.config import settings
+
 
 class OpenDotaAPI(object):
     def __init__(self, output_filepath=None):
-        self.api_key = os.getenv("OPEN_DOTA_KEY")
-        self.base_url = "https://api.opendota.com/api/"
+        self.api_key = settings.OPEN_DOTA_KEY
+        self.base_url = settings.OPEN_DOTA_API_URL
         self.rate_limit = 0.2
-        self.start_match_id = os.getenv("START_MATCH_ID")
+        self.start_match_id = settings
         self.logger = logging.getLogger(__name__)
         self.output_filepath = "data/raw" if not output_filepath else output_filepath
 
@@ -45,12 +47,14 @@ class OpenDotaAPI(object):
 
         # get teams rating from OpenDotaAPI
         team1_info = self.get_team_info(team1_id)
+        self.logger.info(f"Team 1 info: {team1_info}")
         team2_info = self.get_team_info(team2_id)
         team1_rating = 1000 if "rating" not in team1_info else team1_info["rating"]
         team2_rating = 1000 if "rating" not in team1_info else team2_info["rating"]
 
         # get heroes wins from OpenDotaAPI
         team1_heroes_info = self.get_team_heroes_info(team1_id)
+        self.logger.info(f"Team 1 heroes info: {team1_heroes_info}")
         team2_heroes_info = self.get_team_heroes_info(team2_id)
         team1_heroes_wins = self.get_hero_wins(team1_heroes_ids, team1_heroes_info)
         team2_heroes_wins = self.get_hero_wins(team2_heroes_ids, team2_heroes_info)

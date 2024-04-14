@@ -44,7 +44,7 @@ def init_db(session: Session) -> None:
             for team in data:
                 try:
                     team_in = Teams(
-                        id_team=float(team["team_id"]),
+                        id_team=int(team["team_id"]),
                         name_team=str(team["team_name"]),
                     )
                 except Exception as e:

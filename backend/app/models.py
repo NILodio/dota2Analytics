@@ -151,7 +151,7 @@ class Poll(PollBase, table=True):
     hero_id: int
     hero_name: str
     team: str
-    team_id: float
+    team_id: int
     player_name: str | None = None
     description: str | None = None
     owner_id: int | None = Field(default=None, foreign_key="user.id", nullable=False)
@@ -171,7 +171,7 @@ class PollsOut(SQLModel):
 
 class Teams(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    id_team: float
+    id_team: int
     name_team: str
 
 

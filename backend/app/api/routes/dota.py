@@ -20,6 +20,8 @@ from app.models import (
     Teams,
     TeamsOut,
 )
+from app.open_dota import OpenDotaAPI
+from app.utils import make_prediction
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -110,6 +112,21 @@ def read_teams(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
         teams = session.exec(statement).all()
 
     return TeamsOut(data=teams, count=count)
+
+
+@router.get("/team/{id}")
+def read_team(session: SessionDep, current_user: CurrentUser, id: int) -> Any:
+    """
+    Retrieve team info.
+    """
+    # check if user is superuser
+    if current_user.is_superuser:
+        response = _make_request(f"/teams/{id}")
+        if not response:
+            raise HTTPException(status_code=404, detail="teams not found")
+        return response
+    else:
+        raise HTTPException(status_code=400, detail="Not enough permissions")
 
 
 @router.get("/poll/{id}", response_model=PollOut)
@@ -255,39 +272,49 @@ def random_poll(session: SessionDep, current_user: CurrentUser) -> Any:
     return PollsOut(data=polls, count=count)
 
 
-# @router.get("/predict")
-# def predict_poll(
-#     session: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100
-# ) -> Any:
-#     """
-#     Retrieve predict.
-#     """
-#     statement = (
-#         select(Poll).where(Poll.owner_id == current_user.id).offset(skip).limit(limit)
-#     )
-#     polls = session.exec(statement).all()
+@router.get("/predict")
+def predict_poll(
+    session: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100
+) -> Message:
+    """
+    Retrieve predict.
+    """
 
-#     if not polls:
-#         raise HTTPException(status_code=404, detail="Polls not found")
+    open_dota = OpenDotaAPI()
 
-#     team_ids = list(set([poll.team_id for poll in polls]))
+    statement = (
+        select(Poll).where(Poll.owner_id == current_user.id).offset(skip).limit(limit)
+    )
+    polls = session.exec(statement).all()
 
-#     # Filter polls by team_id
-#     team_radiant_id = team_ids[0]
-#     team_direct_id = team_ids[1]
+    if not polls:
+        raise HTTPException(status_code=404, detail="Polls not found")
 
-#     heroes_radiant = [obj for obj in polls if obj.team_id == team_radiant_id]
-#     heroes_direct = [obj for obj in polls if obj.team_id == team_direct_id]
+    team_ids = list(set([poll.team_id for poll in polls]))
 
-#     predict_list = []
+    # Filter polls by team_id
+    team_radiant_id = team_ids[0]
+    team_direct_id = team_ids[1]
 
-#     for i in range(5):
-#         predict_list.append(heroes_radiant[i].hero_id)
+    heroes_radiant = [obj for obj in polls if obj.team_id == team_radiant_id]
+    heroes_direct = [obj for obj in polls if obj.team_id == team_direct_id]
 
-#     for i in range(5):
-#         predict_list.append(heroes_direct[i].hero_id)
+    predict_list = []
 
-#     predict_list.append(team_radiant_id)
-#     predict_list.append(team_direct_id)
+    for i in range(5):
+        predict_list.append(heroes_radiant[i].hero_id)
 
-#     return predict_list
+    for i in range(5):
+        predict_list.append(heroes_direct[i].hero_id)
+
+    predict_list.append(team_radiant_id)
+    predict_list.append(team_direct_id)
+
+    feactures = open_dota.get_model_features_from_input(predict_list)
+
+    output = make_prediction(feactures, "models/3_GradientBoostingClassifier.pkl")
+
+    if output[0] == 1:
+        return Message(message="Radiant Wins")
+    else:
+        return Message(message="Dire Wins")
