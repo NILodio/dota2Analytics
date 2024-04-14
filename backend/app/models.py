@@ -132,6 +132,7 @@ class PollBase(SQLModel):
     hero_id: int
     hero_name: str
     team: str
+    team_id: int
     player_name: str | None = None
     description: str | None = None
 
@@ -150,6 +151,7 @@ class Poll(PollBase, table=True):
     hero_id: int
     hero_name: str
     team: str
+    team_id: int
     player_name: str | None = None
     description: str | None = None
     owner_id: int | None = Field(default=None, foreign_key="user.id", nullable=False)
@@ -165,3 +167,19 @@ class PollOut(PollBase):
 class PollsOut(SQLModel):
     data: list[PollOut]
     count: int
+
+
+class Teams(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    id_team: int
+    name_team: str
+
+
+class TeamsOut(SQLModel):
+    data: list[Teams]
+    count: int
+
+
+class PredictOut(SQLModel):
+    prediction: int
+    message: str

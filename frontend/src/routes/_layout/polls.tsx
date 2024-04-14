@@ -66,6 +66,7 @@ function Polls() {
                     <Th>Hero ID</Th>
                     <Th>Hero Name</Th>
                     <Th>Team</Th>
+                    <Th>Team ID</Th>
                     <Th>Player</Th>
                     <Th>Description</Th>
                     <Th>Actions</Th>
@@ -78,6 +79,7 @@ function Polls() {
                       <Td>{poll.hero_id}</Td>
                       <Td>{poll.hero_name}</Td>
                       <Td>{poll.team}</Td>
+                      <Td>{poll.team_id}</Td>
                       <Td>{poll.player_name}</Td>
                       <Td color={!poll.description ? "ui.dim" : "inherit"}>
                         {poll.description || "N/A"}

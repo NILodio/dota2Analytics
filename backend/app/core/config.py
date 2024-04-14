@@ -42,9 +42,9 @@ class Settings(BaseSettings):
             return f"http://{self.DOMAIN}"
         return f"https://{self.DOMAIN}"
 
-    BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
-        []
-    )
+    BACKEND_CORS_ORIGINS: Annotated[
+        list[AnyUrl] | str, BeforeValidator(parse_cors)
+    ] = []
 
     PROJECT_NAME: str
     SENTRY_DSN: HttpUrl | None = None
@@ -56,6 +56,7 @@ class Settings(BaseSettings):
     # OpenDota API
     OPEN_DOTA_KEY: str
     OPEN_DOTA_API_URL: str = "https://api.opendota.com/api/"
+    START_MATCH_ID: str
 
     @computed_field  # type: ignore[misc]
     @property

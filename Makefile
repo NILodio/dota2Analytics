@@ -48,6 +48,9 @@ lint:
 migrate:
 	docker-compose exec backend bash -c "alembic revision --autogenerate -m '$(argument)' && alembic upgrade head"
 
+.PHONY: backend_bash
+backend_bash:
+	docker compose exec backend bash
 
 ## Upload Data to S3
 sync_data_to_s3:

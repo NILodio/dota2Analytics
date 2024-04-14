@@ -1,12 +1,16 @@
 import logging
+import pickle
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
 import emails  # type: ignore
+import numpy as np
+import pandas as pd
 from jinja2 import Template
 from jose import JWTError, jwt
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 
 from app.core.config import settings
 
@@ -114,3 +118,59 @@ def verify_password_reset_token(token: str) -> str | None:
         return str(decoded_token["sub"])
     except JWTError:
         return None
+
+
+def get_numerical_columns(df):
+    numeric_types = ["int16", "int32", "int64", "float16", "float32", "float64"]
+    return df.select_dtypes(include=numeric_types).columns.to_list()
+
+
+def apply_log_transformation(df_original):
+    df = df_original.copy()
+    for column in df.columns.to_list():
+        df[column] = df[column].map(lambda value: np.log(value) if value > 0 else 0)
+    return df
+
+
+def standard_scale_dataset(df):
+    # get numerical columns
+    numerical_columns = get_numerical_columns(df)
+    # scale the dataset using a StandardScaler
+    scaler = StandardScaler()
+    df_numeric = df[numerical_columns]
+    df_scaled = scaler.fit_transform(df_numeric.to_numpy())
+    df_scaled = pd.DataFrame(df_scaled, columns=df_numeric.columns.to_list())
+    return df_scaled
+
+
+def extract_polynomial_features(df, degree=2, test_size=0.3):
+    polynomial = PolynomialFeatures(
+        degree=degree, include_bias=False, interaction_only=False
+    )
+    features_polynomial = polynomial.fit_transform(df)
+    return pd.DataFrame(features_polynomial)
+
+
+def load_model(path):
+    return pickle.load(open(path, "rb"))
+
+
+def make_prediction(df, model_path):
+
+    df = apply_log_transformation(
+        df
+    )  # apply log transformation on columns with outliers
+
+    df_scaled = standard_scale_dataset(
+        df
+    )  # apply standard scaling to the dataset (excludes non-numeric columns)
+
+    complex_df = extract_polynomial_features(
+        df_scaled, degree=2
+    )  # extract polynomial features
+
+    model = load_model(model_path)  # load the model
+
+    y_pred = model.predict(complex_df)  # predict the new data target
+
+    return y_pred
