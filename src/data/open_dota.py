@@ -92,7 +92,7 @@ class OpenDotaAPI(object):
                     team_heroes_wins.append(hero_info["wins"])
                     break
             if len(team_heroes_wins) == wins_len:
-                team_heroes_wins.append(2)
+                team_heroes_wins.append(0)
 
         if len(team_heroes_wins) != 5:
             raise Exception(
