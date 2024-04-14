@@ -143,6 +143,7 @@ export type PollCreate = {
 export type PollOut = {
   id: number;
   hero_id: number;
+  team_id: number;
   hero_name: string;
   team: string;
   player_name?: string | null;
@@ -160,4 +161,9 @@ export type PollUpdate = {
 export type PollsOut = {
   data: Array<PollOut>;
   count: number;
+};
+
+export type PredictOut = {
+  prediction: int;
+  message: string;
 };

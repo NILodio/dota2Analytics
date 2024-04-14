@@ -23,6 +23,7 @@ import type {
   PollOut,
   PollsOut,
   PollUpdate,
+  PredictOut,
 } from "./models";
 
 export type TDataLoginAccessToken = {
@@ -529,6 +530,11 @@ export class DotaService {
   }
 }
 
+export type TDataReadPollMessage = {
+  limit?: number;
+  skip?: number;
+};
+
 export type TDataReadPolls = {
   limit?: number;
   skip?: number;
@@ -652,7 +658,7 @@ export class PollsService {
     });
   }
 
-    /**
+  /**
    * Delete Polls
    * Delete a polls.
    * @returns Message Successful Response
@@ -667,5 +673,46 @@ export class PollsService {
           404: `Not Found`,
         },
       });
-    }
+  }
+
+  /**
+   * Random Polls
+   * Delete a polls.
+   * @returns Message Successful Response
+   * @throws ApiError
+   * */
+  public static randomPolls(): CancelablePromise<Message> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/dota/randompoll",
+      errors: {
+        422: `Validation Error`,
+        404: `Not Found`,
+      },
+    });
+  }
+
+  /**
+   * Predict Polls
+   * Delete a polls.
+   * @returns Message Successful Response
+   * @throws ApiError
+   * */
+  public static predictPolls(
+    data: TDataReadPolls = {}
+  ): CancelablePromise<PredictOut> {
+    const { limit = 100, skip = 0 } = data;
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/dota/predict",
+      query: {
+        skip,
+        limit,
+      },
+      errors: {
+        422: `Validation Error`,
+        404: `Not Found`,
+      },
+    });
+  }
 }
