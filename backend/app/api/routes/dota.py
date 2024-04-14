@@ -17,6 +17,7 @@ from app.models import (
     PollOut,
     PollsOut,
     PollUpdate,
+    PredictOut,
     Teams,
     TeamsOut,
 )
@@ -205,8 +206,8 @@ def delete_polls(session: SessionDep, current_user: CurrentUser) -> Message:
     return Message(message="Polls deleted successfully")
 
 
-@router.post("/randompoll", response_model=PollsOut)
-def random_poll(session: SessionDep, current_user: CurrentUser) -> Any:
+@router.post("/randompoll")
+def random_poll(session: SessionDep, current_user: CurrentUser) -> Message:
     """
     Create a random poll.
     """
@@ -225,7 +226,7 @@ def random_poll(session: SessionDep, current_user: CurrentUser) -> Any:
     if not response:
         raise HTTPException(status_code=404, detail="Heroes not found")
 
-    polls = session.query(Poll).delete()
+    session.query(Poll).delete()
 
     # Get 10 random heroes from response List
     if response:
@@ -262,20 +263,14 @@ def random_poll(session: SessionDep, current_user: CurrentUser) -> Any:
         session.commit()
         session.refresh(poll2)
 
-    count_statement = (
-        select(func.count()).select_from(Poll).where(Poll.owner_id == current_user.id)
-    )
-    count = session.exec(count_statement).one()
-    statement = select(Poll).where(Poll.owner_id == current_user.id)
-    polls = session.exec(statement).all()
-
-    return PollsOut(data=polls, count=count)
+    session.commit()
+    return Message(message="Random Polls Generated Successfully")
 
 
-@router.get("/predict")
+@router.get("/predict", response_model=PredictOut)
 def predict_poll(
     session: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100
-) -> Message:
+) -> Any:
     """
     Retrieve predict.
     """
@@ -315,6 +310,6 @@ def predict_poll(
     output = make_prediction(feactures, "models/3_GradientBoostingClassifier.pkl")
 
     if output[0] == 1:
-        return Message(message="Radiant Wins")
+        return PredictOut(prediction=output[0], message="Radiant Wins")
     else:
-        return Message(message="Dire Wins")
+        return PredictOut(prediction=output[0], message="Dire Wins")

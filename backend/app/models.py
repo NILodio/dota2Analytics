@@ -178,3 +178,8 @@ class Teams(SQLModel, table=True):
 class TeamsOut(SQLModel):
     data: list[Teams]
     count: int
+
+
+class PredictOut(SQLModel):
+    prediction: int
+    message: str
