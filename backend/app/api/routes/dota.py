@@ -313,3 +313,23 @@ def predict_poll(
         return PredictOut(prediction=output[0], message="Radiant Wins")
     else:
         return PredictOut(prediction=output[0], message="Dire Wins")
+
+
+@router.post("/predictlist", response_model=PredictOut)
+def predict_poll_list(
+    session: SessionDep, current_user: CurrentUser, data: list[int]
+) -> Any:
+    """
+    Retrieve predict.
+    """
+
+    open_dota = OpenDotaAPI()
+
+    feactures = open_dota.get_model_features_from_input(data)
+
+    output = make_prediction(feactures, "models/3_GradientBoostingClassifier.pkl")
+
+    if output[0] == 1:
+        return PredictOut(prediction=output[0], message="Radiant Wins")
+    else:
+        return PredictOut(prediction=output[0], message="Dire Wins")
